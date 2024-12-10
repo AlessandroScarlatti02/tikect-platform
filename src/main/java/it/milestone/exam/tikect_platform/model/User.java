@@ -28,7 +28,7 @@ public class User {
     @NotBlank(message = "Can't be blank or null")
     private String state;
 
-    @OneToMany(mappedBy = "ticket")
+    @OneToMany(mappedBy = "user")
     private List<Ticket> tickets;
 
     // @ManyToMany(fetch = FetchType.EAGER)
