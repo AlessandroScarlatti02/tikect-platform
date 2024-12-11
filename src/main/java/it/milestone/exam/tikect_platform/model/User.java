@@ -19,7 +19,7 @@ public class User {
     private Long id;
 
     @NotBlank(message = "Can't be blank or null")
-    private String name;
+    private String username;
 
     @NotBlank(message = "Can't be blank or null")
     private String mail;
@@ -44,12 +44,12 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getMail() {
@@ -84,11 +84,11 @@ public class User {
         this.tickets = tickets;
     }
 
-    public List<Role> getRole() {
+    public List<Role> getRoles() {
         return role;
     }
 
-    public void setRole(List<Role> role) {
+    public void setRoles(List<Role> role) {
         this.role = role;
     }
 

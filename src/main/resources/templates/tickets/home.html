@@ -10,6 +10,90 @@
 
     <!-- Navbar -->
     <div th:replace="~{navbar :: navbar}"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <p class="h1 text-center my-4">Welcome ADMIN to Ticket Home</p>
+        </div>
+
+        <div th:if="${successMessage != null}">
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        <!-- Filter -->
+        <div class="row">
+            <div class="container-fluid">
+                <div class="row justify-content-between">
+                    <div class="col-6">
+                        <form th:action="@{/tickets}" method="get">
+                            <div class="input-group">
+                                <input name="keyword" th:value="${keyword}" class="form-control" type="search"
+                                    placeholder="Filter" aria-label="Filter">
+
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-search"></i>
+                                </button>
+                                <a th:href="@{/tickets}"><button class="btn btn-danger" type="button">
+                                        RESET FILTER
+                                    </button></a>
+                            </div>
+                        </form>
+
+                        <!-- New Ticket -->
+                    </div>
+                    <div class="col-2">
+                        <a class="btn btn-success" th:href="@{/tickets/create}"><i class="fas fa-plus"></i>
+                            Insert new Ticket </a>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div th:if="${!tickets.isEmpty()}">
+
+            <div class="row">
+
+                <table class="col-8">
+                    <thead>
+                        <tr>
+                            <th>Object</th>
+                            <th>Category</th>
+                            <th>Operator</th>
+                            <th>State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each=" ticket : ${tickets}">
+                            <td>
+                                <p th:text="${ticket.object}"></p>
+                            </td>
+                            <td>
+                                <p th:text="${ticket.category.getName()}"></p>
+                            </td>
+                            <td>
+                                <p th:text="${ticket.user.getUsername()}"></p>
+                            </td>
+                            <td>
+                                <p th:text="${ticket.state}"></p>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+    <div th:if="${tickets.isEmpty()}">
+        <div class="container-fluid">
+            <div class="alert alert-danger" role="alert">
+                <p class="h2 text-center">There's no Tickets in the Database
+                </p>
+            </div>
+        </div>
+    </div>
 
     <div th:replace="~{fragments :: scripts}"></div>
 </body>
+
+</html>
