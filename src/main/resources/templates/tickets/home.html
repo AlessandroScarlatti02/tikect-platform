@@ -14,10 +14,17 @@
         <div class="row">
             <p class="h1 text-center my-4">Welcome ADMIN to Ticket Home</p>
         </div>
-
+        <!-- Success Message -->
         <div th:if="${successMessage != null}">
             <div class="alert alert-success alert-dismissible fade show" role="alert">
                 <span th:text="${successMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        <!-- Error message -->
+        <div th:if="${errorMessage != null}">
+            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+                <span th:text="${errorMessage}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
@@ -54,13 +61,14 @@
 
             <div class="row">
 
-                <table class="col-8">
+                <table class="col-12">
                     <thead>
                         <tr>
                             <th>Object</th>
                             <th>Category</th>
                             <th>Operator</th>
                             <th>State</th>
+                            <th>Utility</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -77,6 +85,14 @@
                             <td>
                                 <p th:text="${ticket.state}"></p>
                             </td>
+                            <td>
+                                <div class="d-flex">
+
+                                    <a class="btn btn-light m-2" th:href="@{|/tickets/show/${ticket.id}|}">Info <br>
+                                        <i class="fas fa-info-circle"></i></a>
+                                    <a class="btn btn-light m-2" th:href="@{|/tickets/edit/${ticket.id}|}">Add note <br>
+                                        <i class="fas fa-edit"></i></a>
+                                </div>
                         </tr>
                     </tbody>
                 </table>

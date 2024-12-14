@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="~{fragments :: head}"></div>
+    <title>Create new ticket</title>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div th:replace="~{navbar :: navbar}"></div>
+    <div class="container">
+        <div class="row">
+            <div class="col-12 text-center">
+                <p class="h3 my-4" style="color: gray;">Ticket Object</p>
+                <p class="h1" th:text="${ticket.object}"></p>
+                <hr>
+                <p class="h3 my-4" style="color: gray;">Category</p>
+                <p class="h2" th:text="${ticket.category.getName()}"></p>
+                <hr>
+                <p class="h3 my-4" style="color: gray;">Ticket Text</p>
+                <p class="p-3 h6" style="border: 1px, solid, gray; border-radius: 7px;" th:text="${ticket.text}"></p>
+                <hr>
+                <p class="h3" style=" margin-top: 10px; color: gray;">This ticket has notes</p><br>
+                <a class="btn btn-light" th:href="@{|/tickets/show/${ticket.id}/notes|}">Show notes</a>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments :: scripts}"></div>
+</body>
+
+</html>

@@ -27,8 +27,7 @@ public class User {
     @NotBlank(message = "Can't be blank or null")
     private String password;
 
-    @NotBlank(message = "Can't be blank or null")
-    private String state;
+    private Boolean state;
 
     @OneToMany(mappedBy = "user")
     private List<Ticket> tickets;
@@ -36,12 +35,31 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> role;
 
+    @OneToMany(mappedBy = "user")
+    private List<Note> notes;
+
     public Long getId() {
         return id;
     }
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public List<Role> getRole() {
+        return role;
+    }
+
+    public void setRole(List<Role> role) {
+        this.role = role;
+    }
+
+    public List<Note> getNotes() {
+        return notes;
+    }
+
+    public void setNotes(List<Note> notes) {
+        this.notes = notes;
     }
 
     public String getUsername() {
@@ -68,11 +86,11 @@ public class User {
         this.password = password;
     }
 
-    public String getState() {
+    public Boolean getState() {
         return state;
     }
 
-    public void setState(String state) {
+    public void setState(Boolean state) {
         this.state = state;
     }
 

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="~{fragments :: head}"></div>
+    <title>Create new ticket</title>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div th:replace="~{navbar :: navbar}"></div>
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12 ">
+
+                <a class="btn btn-dark m-3" th:href="@{|/tickets/show/${ticket.id}|}">Back to Ticket
+                    <i class="fas fa-sign-out-alt"></i></a>
+            </div>
+            <div class="col-12 text-center p-5">
+
+                <p class="h1 my-4">Ticket <span th:text="${ticket.object}"></span>'s notes:</p>
+
+                <a class="btn btn-success" data-bs-toggle="modal" data-bs-target="#noteModal">Add note
+                    <i class="fas fa-edit"></i></a>
+
+            </div>
+            <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
+                <form th:action="@{/notes/store}" method="post" th:object="${note}" id="note-form">
+
+                    <div class="modal-dialog">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <h1 class="modal-title fs-5" id="exampleModalLabel">Create note</h1>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                    aria-label="Close"></button>
+                            </div>
+                            <div class="modal-body">
+                                <label class="form-label" for="user">Author</label>
+                                <select name="user" th:errorClass="is-invalid" class="form-select" id="user"
+                                    th:field="*{user}">
+                                    <option value="0"></option>
+                                    <div th:each=" user : ${users}">
+                                        <option th:value="${user.id}">
+                                            <p th:text="${user.username}"></p>
+                                        </option>
+                                    </div>
+                                    <div>
+                                        <ul>
+                                            <li th:each="error : ${#fields.errors('user')}" th:text="${error}"></li>
+                                        </ul>
+                                    </div>
+                                </select>
+                                <label for="text" class="form-label">Text</label>
+                                <textarea class="form-control" placeholder="" id="text" th:field="*{text}"
+                                    style="height: 150px" th:errorClass="is-invalid" name="text"></textarea>
+                                <input type="hidden" th:field="*{ticket}">
+                                <div>
+                                    <ul>
+                                        <li th:each="error : ${#fields.errors('text')}" th:text="${error}"></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                <button type="submit" class="btn btn-primary">Save</button>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="col-12 d-flex justify-content-center">
+
+                <div th:if="${!notes.isEmpty()}">
+                    <table class=" table table-secondary">
+                        <thead>
+                            <tr>
+                                <th>Author</th>
+                                <th>Date</th>
+                                <th>Note</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each=" note : ${notes}">
+                                <td th:text="${note.user.getUsername()}"></td>
+                                <td th:text="${note.creationDate}"></td>
+                                <td th:text="${note.text}"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <div th:if="${notes.isEmpty()}">
+                    <div class="alert alert-secondary" role="alert">
+                        <p class="h2 text-center">There's no notes for this ticket
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:replace="~{fragments :: scripts}"></div>
+</body>
+
+</html>
