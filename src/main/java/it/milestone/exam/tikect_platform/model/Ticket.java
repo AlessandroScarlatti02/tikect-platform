@@ -2,6 +2,8 @@ package it.milestone.exam.tikect_platform.model;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,18 +27,21 @@ public class Ticket {
     private String text;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "category_id", nullable = false)
     private Category category;
 
     @OneToMany(mappedBy = "ticket")
+    @JsonBackReference
     private List<Note> notes;
 
     @NotBlank(message = "Can't be blank or null")
     private String state = "To do";
 
     @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private User user;
+    @JsonBackReference
+    @JoinColumn(name = "operator_id", nullable = false)
+    private Operator operator;
 
     public Long getId() {
         return id;
@@ -86,12 +91,12 @@ public class Ticket {
         this.state = state;
     }
 
-    public User getUser() {
-        return user;
+    public Operator getOperator() {
+        return operator;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setOperator(Operator operator) {
+        this.operator = operator;
     }
 
 }

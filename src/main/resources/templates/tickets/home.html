@@ -10,9 +10,29 @@
 
     <!-- Navbar -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <!-- Header -->
     <div class="container-fluid">
         <div class="row">
-            <p class="h1 text-center my-4">Welcome ADMIN to Ticket Home</p>
+            <div class="col-12 my-4  text-center">
+                <p class="h1 text-center my-4" sec:authorize="hasAuthority('ADMIN')">Welcome ADMIN to Ticket Home</p>
+                <div sec:authorize="hasAuthority('OPERATOR')">
+
+                    <p class="h1 text-center my-4">Welcome <span th:text="${operator.Name}"></span> to your Ticket
+                        Home
+                    </p>
+                    <a th:if="${operator.state}" class="btn btn-danger" th:href="@{/operator/state/0}">
+                        Not Active</a>
+                    <a th:if="${!operator.state}" class="btn btn-success" th:href="@{/operator/state/1}">
+                        Active</a>
+                </div>
+                <div sec:authorize="hasAuthority('USER')">
+                    <p class="h1 text-center my-4">Welcome USER to Ticket Support Home</p>
+                    <hr>
+                    <p>You need Support?</p>
+                    <a class="btn btn-success" th:href="@{/tickets/create}"><i class="fas fa-plus"></i>
+                        Insert a new Ticket </a>
+                </div>
+            </div>
         </div>
         <!-- Success Message -->
         <div th:if="${successMessage != null}">
@@ -42,10 +62,24 @@
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
+        <!-- Operator Error State Message -->
+        <div th:if="${stateOperatorErrorMessage != null}">
+            <div class="alert alert-danger alert-dismissible fade show text-center" role="alert">
+                <span th:text="${stateOperatorErrorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        <!-- Operator Success State Message -->
+        <div th:if="${stateOperatorSuccessMessage != null}">
+            <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+                <span th:text="${stateOperatorSuccessMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
         <!-- Filter -->
-        <div class="row">
-            <div class="container-fluid">
-                <div class="row justify-content-between">
+        <div class="row" sec:authorize="hasAuthority('ADMIN')">
+            <div class=" container-fluid">
+                <div class="row justify-content-center">
                     <div class="col-6">
                         <form th:action="@{/tickets}" method="get">
                             <div class="input-group">
@@ -63,7 +97,7 @@
 
                         <!-- New Ticket -->
                     </div>
-                    <div class="col-2">
+                    <div class="col-2" sec:authorize="hasAnyAuthority('ADMIN','USER')">
                         <a class="btn btn-success" th:href="@{/tickets/create}"><i class="fas fa-plus"></i>
                             Insert new Ticket </a>
                     </div>
@@ -71,80 +105,186 @@
                 </div>
             </div>
         </div>
-        <div th:if="${!tickets.isEmpty()}">
 
-            <div class="row p-5">
 
-                <table class="col-12 table text-center">
-                    <thead>
-                        <tr>
-                            <th>Object</th>
-                            <th>Category</th>
-                            <th>Operator</th>
-                            <th>State</th>
-                            <th></th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <div th:each=" ticket : ${tickets}">
+        <div class="row p-5" sec:authorize="hasAnyAuthority('OPERATOR','ADMIN')">
 
-                            <div th:if="${ticket.state == 'To do'}">
-                                <tr class="table-danger">
-                            </div>
-                            <div th:if="${ticket.state == 'In progress'}">
-                                <tr class="table-primary">
-                            </div>
-                            <div th:if="${ticket.state == 'Completed'}">
-                                <tr class="table-success">
-                            </div>
-                            <td valign="middle">
-                                <p th:text="${ticket.object}"></p>
-                            </td>
-                            <td valign="middle">
-                                <p th:text="${ticket.category.getName()}"></p>
-                            </td>
-                            <td valign="middle">
-                                <p th:text="${ticket.user.getUsername()}"></p>
-                            </td>
-                            <td valign="middle">
-                                <p th:text="${ticket.state}" class="fw-bold"></p>
-                            </td>
-                            <td valign="middle">
-                                <div class="d-flex justify-content-end">
-                                    <div th:if="${ticket.state == 'To do'}">
-                                        <a class="btn btn-primary m-2" th:href="@{|/tickets/state/${ticket.id}/1|}">In
-                                            progress</a>
-                                    </div>
-                                    <div th:if="${ticket.state == 'In progress'}">
-                                        <a class="btn btn-success m-2"
-                                            th:href="@{|/tickets/state/${ticket.id}/2|}">Completed</a>
-                                    </div>
-                                    <a class="btn btn-light m-2" th:href="@{|/tickets/show/${ticket.id}|}">Info
-                                        <br>
-                                        <i class="fas fa-info-circle"></i></a>
-                                    <form th:action="@{|/tickets/delete/${ticket.id}|}" method="post" class="m-2">
-                                        <button type="submit" class="btn btn-light"
-                                            onclick="return confirm('Are you sure?')">Delete <br><i
-                                                class="fas fa-trash"></i></button>
-                                    </form>
+            <!-- TABLE ADMIN -->
+            <table sec:authorize="hasAuthority('ADMIN')" class=" col-12 table text-center"
+                th:if="${!tickets.isEmpty()}">
+                <thead>
+                    <tr>
+                        <th>Object</th>
+                        <th>Category</th>
+                        <th>Operator</th>
+                        <th>State</th>
+                        <th>Notes N°</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody>
+
+
+                    <div th:each=" ticket : ${tickets}">
 
 
 
-                                </div>
 
-                                </tr>
-
+                        <div th:if="${ticket.state == 'To do'}">
+                            <tr class="table-danger">
                         </div>
+                        <div th:if="${ticket.state == 'In progress'}">
+                            <tr class="table-primary">
+                        </div>
+                        <div th:if="${ticket.state == 'Completed'}">
+                            <tr class="table-success">
+                        </div>
+                        <td valign="middle">
+                            <p th:text="${ticket.object}"></p>
+                        </td>
+                        <td valign="middle">
+                            <p th:text="${ticket.category.getName()}"></p>
+                        </td>
+                        <td valign="middle">
+                            <p th:text="${ticket.operator.getName()}"> </p>
+                            <p th:text="${ticket.operator.getSurname()}"></p>
+                        </td>
+                        <td valign="middle">
+                            <p th:text="${ticket.state}" class="fw-bold"></p>
+                        </td>
+                        <td valign="middle">
+                            <p th:text="${ticket.notes.size()}"></p>
+                        </td>
+                        <td valign="middle">
+                            <div class="d-flex justify-content-end">
+                                <div th:if="${ticket.state == 'To do'}" sec:authorize="hasAuthority('OPERATOR')">
+                                    <a class="btn btn-primary m-2" th:href="@{|/tickets/state/${ticket.id}/1|}">In
+                                        progress</a>
+                                </div>
+                                <div th:if="${ticket.state == 'In progress'}" sec:authorize="hasAuthority('OPERATOR')">
+                                    <a class="btn btn-success m-2"
+                                        th:href="@{|/tickets/state/${ticket.id}/2|}">Completed</a>
+                                </div>
+                                <a class="btn btn-light m-2" th:href="@{|/tickets/show/${ticket.id}|}">Info
+                                    <br>
+                                    <i class="fas fa-info-circle"></i></a>
+                                <a sec:authorize="hasAuthority('ADMIN')" class="btn btn-light m-2"
+                                    th:href="@{|/tickets/edit/${ticket.id}|}">Edit
+                                    <br>
+                                    <i class="fas fa-edit"></i></a>
+                                <form sec:authorize="hasAuthority('ADMIN')" th:action="
+                                        @{|/tickets/delete/${ticket.id}|}" method="post" class="m-2">
+                                    <button type="submit" class="btn btn-light"
+                                        onclick="return confirm('Are you sure?')">Delete <br><i
+                                            class="fas fa-trash"></i></button>
+                                </form>
 
 
-                    </tbody>
-                </table>
-            </div>
+
+                            </div>
+                        </td>
+                        </tr>
+
+                    </div>
+
+                </tbody>
+            </table>
+
+            <!-- TABLE OPERATOR -->
+            <table sec:authorize="hasAuthority('OPERATOR')" class=" col-12 table text-center"
+                th:if="${!filteredTickets.isEmpty()}">
+                <thead>
+                    <tr>
+                        <th>Object</th>
+                        <th>Category</th>
+                        <th>Operator</th>
+                        <th>State</th>
+                        <th>Notes N°</th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody sec:authorize="hasAuthority('OPERATOR')">
+
+
+                    <div th:each=" ticket : ${filteredTickets}">
+
+
+
+
+                        <div th:if="${ticket.state == 'To do'}">
+                            <tr class="table-danger">
+                        </div>
+                        <div th:if="${ticket.state == 'In progress'}">
+                            <tr class="table-primary">
+                        </div>
+                        <div th:if="${ticket.state == 'Completed'}">
+                            <tr class="table-success">
+                        </div>
+                        <td valign="middle">
+                            <p th:text="${ticket.object}"></p>
+                        </td>
+                        <td valign="middle">
+                            <p th:text="${ticket.category.getName()}"></p>
+                        </td>
+                        <td valign="middle">
+                            <p th:text="${ticket.operator.getName()}"> </p>
+                            <p th:text="${ticket.operator.getSurname()}"></p>
+                        </td>
+                        <td valign="middle">
+                            <p th:text="${ticket.state}" class="fw-bold"></p>
+                        </td>
+                        <td valign="middle">
+                            <p th:text="${ticket.notes.size()}"></p>
+                        </td>
+                        <td valign="middle">
+                            <div class="d-flex justify-content-end">
+                                <div th:if="${ticket.state == 'To do'}" sec:authorize="hasAuthority('OPERATOR')">
+                                    <a class="btn btn-primary m-2" th:href="@{|/tickets/state/${ticket.id}/1|}">In
+                                        progress</a>
+                                </div>
+                                <div th:if="${ticket.state == 'In progress'}" sec:authorize="hasAuthority('OPERATOR')">
+                                    <a class="btn btn-success m-2"
+                                        th:href="@{|/tickets/state/${ticket.id}/2|}">Completed</a>
+                                </div>
+                                <a class="btn btn-light m-2" th:href="@{|/tickets/show/${ticket.id}|}">Info
+                                    <br>
+                                    <i class="fas fa-info-circle"></i></a>
+                                <a sec:authorize="hasAuthority('ADMIN')" class="btn btn-light m-2"
+                                    th:href="@{|/tickets/edit/${ticket.id}|}">Edit
+                                    <br>
+                                    <i class="fas fa-edit"></i></a>
+                                <form sec:authorize="hasAuthority('ADMIN')" th:action="
+                                        @{|/tickets/delete/${ticket.id}|}" method="post" class="m-2">
+                                    <button type="submit" class="btn btn-light"
+                                        onclick="return confirm('Are you sure?')">Delete <br><i
+                                            class="fas fa-trash"></i></button>
+                                </form>
+
+
+
+                            </div>
+                        </td>
+                        </tr>
+
+                    </div>
+
+                </tbody>
         </div>
+        </table>
 
     </div>
-    <div th:if="${tickets.isEmpty() && keyword == null}">
+
+    </div>
+    <div th:if="${filteredTickets.isEmpty() && keyword == null}" sec:authorize="hasAuthority('OPERATOR')">
         <div class="container-fluid my-4">
+            <div class="alert alert-danger " role="alert">
+                <p class="h2 text-center">You have no ticket assigned
+                </p>
+            </div>
+        </div>
+    </div>
+    <div th:if="${tickets.isEmpty() && keyword == null}" sec:authorize="hasAuthority('ADMIN')">
+        <div class=" container-fluid my-4">
             <div class="alert alert-danger " role="alert">
                 <p class="h2 text-center">There's no Tickets in the Database
                 </p>

@@ -10,19 +10,45 @@
 
     <!-- Navbar -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
+    <div class="col-12 ">
+
+        <a class="btn btn-dark m-3" th:href="@{/tickets}">Back to Tickets
+            <i class="fas fa-sign-out-alt"></i></a>
+    </div>
     <div class="container">
         <div class="row">
-            <div class="col-12 text-center">
-                <p class="h3 my-4" style="color: gray;">Ticket Object</p>
+
+            <div class="col-12 text-center my-4">
+                <p class="h1" style="border-bottom: 2px solid black; color: red;">Ticket Info</p>
+
+                <p class="h3 my-4" style="color: gray;">Object</p>
                 <p class="h1" th:text="${ticket.object}"></p>
                 <hr>
                 <p class="h3 my-4" style="color: gray;">Category</p>
                 <p class="h2" th:text="${ticket.category.getName()}"></p>
                 <hr>
-                <p class="h3 my-4" style="color: gray;">Ticket Text</p>
+                <p class="h3 my-4" style="color: gray;">Text</p>
                 <p class="p-3 h6" style="border: 1px, solid, gray; border-radius: 7px;" th:text="${ticket.text}"></p>
                 <hr>
-                <p class="h3" style=" margin-top: 10px; color: gray;">This ticket has notes</p><br>
+                <p class="h3 my-4" style="color: gray;">State</p>
+                <div th:if="${ticket.state == 'To do'}">
+                    <p style="color: red;" th:text="${ticket.state}"></p>
+                </div>
+                <div th:if="${ticket.state == 'In progress'}">
+                    <p style="color: blue;" th:text=" ${ticket.state}"></p>
+                </div>
+                <div th:if="${ticket.state == 'Completed'}">
+                    <p style="color: rgb(47, 255, 68);" class="fw-bold" th:text="${ticket.state}"></p>
+                </div>
+                <hr>
+                <p class="h3 my-4" style="color: gray;">Operator</p>
+                <div class="d-flex justify-content-center">
+
+                    <p class="h2" th:text="${ticket.operator.getName()}"></p>
+                    <p class="h2" style="padding-left: 3px;" th:text="${ticket.operator.getSurname()}"></p>
+                </div>
+                <hr>
+                <p class="h3" style=" margin-top: 10px; color: gray;">Notes</p><br>
                 <a class="btn btn-secondary" th:href="@{|/tickets/show/${ticket.id}/notes|}">Show notes</a>
             </div>
         </div>

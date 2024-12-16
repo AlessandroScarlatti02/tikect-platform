@@ -5,6 +5,7 @@ import java.util.Optional;
 import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,21 +15,21 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import it.milestone.exam.tikect_platform.model.Note;
-import it.milestone.exam.tikect_platform.model.Role;
+import it.milestone.exam.tikect_platform.model.Operator;
 import it.milestone.exam.tikect_platform.model.Ticket;
-import it.milestone.exam.tikect_platform.model.User;
 import it.milestone.exam.tikect_platform.repository.CategoryRepository;
 import it.milestone.exam.tikect_platform.repository.NoteRepository;
+import it.milestone.exam.tikect_platform.repository.OperatorRepository;
 import it.milestone.exam.tikect_platform.repository.RoleRepository;
 import it.milestone.exam.tikect_platform.repository.TicketRepository;
 import it.milestone.exam.tikect_platform.repository.UserRepository;
+import it.milestone.exam.tikect_platform.security.DatabaseUserDetails;
 import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 
 @Controller
 @RequestMapping("/tickets")
@@ -38,7 +39,7 @@ public class TicketController {
     TicketRepository ticketRepo;
 
     @Autowired
-    UserRepository userRepo;
+    OperatorRepository operatorRepo;
 
     @Autowired
     CategoryRepository categoryRepo;
@@ -49,8 +50,12 @@ public class TicketController {
     @Autowired
     NoteRepository noteRepo;
 
+    @Autowired
+    UserRepository userRepo;
+
     @GetMapping
-    public String home(Model model, @RequestParam(name = "keyword", required = false) String keyword) {
+    public String home(Model model, @RequestParam(name = "keyword", required = false) String keyword,
+            @AuthenticationPrincipal DatabaseUserDetails authentication) {
 
         if (keyword != null && !keyword.isBlank()) {
             model.addAttribute("tickets", ticketRepo.findByObjectContains(keyword));
@@ -58,16 +63,20 @@ public class TicketController {
 
             model.addAttribute("tickets", ticketRepo.findAll());
         }
-        model.addAttribute("keyword", keyword);
+
+        model.addAttribute("filteredTickets", ticketRepo.findByOperatorUserUsername(authentication.getUsername()));
         model.addAttribute("users", userRepo.findAll());
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("operators", operatorRepo.findAll());
+        model.addAttribute("operator", operatorRepo.findByUserUsername(authentication.getUsername()));
         return "tickets/home";
     }
 
     @GetMapping("/create")
     public String create(Model model, RedirectAttributes redirectAttributes) {
 
-        List<User> avaliableUsers = userRepo.findByState(true);
-        if (avaliableUsers.isEmpty()) {
+        List<Operator> avaliableOperators = operatorRepo.findByState(true);
+        if (avaliableOperators.isEmpty()) {
             redirectAttributes.addFlashAttribute("errorMessage", "Can't Create Ticket because no Operators avaliable");
             return "redirect:/tickets";
         }
@@ -81,8 +90,9 @@ public class TicketController {
     public String store(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, Model model,
             RedirectAttributes redirectAttributes, Random random) {
 
-        List<User> avaliableUsers = userRepo.findByState(true);
-        int size = avaliableUsers.size();
+        List<Operator> avaliableOperators = operatorRepo.findByState(true);
+
+        int size = avaliableOperators.size();
         int i = random.nextInt(size);
 
         model.addAttribute("categories", categoryRepo.findAll());
@@ -93,10 +103,37 @@ public class TicketController {
             return "tickets/create";
         }
 
-        ticketForm.setUser(avaliableUsers.get(i));
+        ticketForm.setOperator(avaliableOperators.get(i));
         ticketRepo.save(ticketForm);
         redirectAttributes.addFlashAttribute("successMessage", "Ticket created succesfully");
 
+        return "redirect:/tickets";
+    }
+
+    @GetMapping("/edit/{id}")
+    public String edit(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes, Ticket ticketForm,
+            BindingResult bindingResult) {
+
+        model.addAttribute("ticket", ticketRepo.findById(id));
+        model.addAttribute("categories", categoryRepo.findAll());
+
+        return "tickets/edit";
+    }
+
+    @PostMapping("/update")
+    public String update(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, Model model,
+            RedirectAttributes redirectAttributes) {
+
+        model.addAttribute("categories", categoryRepo.findAll());
+        if (ticketForm.getCategory() == null) {
+            bindingResult.addError(new ObjectError("Category not Found", "Insert Category"));
+        }
+        if (bindingResult.hasErrors()) {
+            return "tickets/edit";
+        }
+        ticketForm.setNotes(noteRepo.findByTicket(ticketForm));
+        ticketRepo.save(ticketForm);
+        redirectAttributes.addFlashAttribute("editMessage", "Ticket updated succesfully");
         return "redirect:/tickets";
     }
 
@@ -117,6 +154,7 @@ public class TicketController {
         List<Note> notes = ticketRepo.findById(id).get().getNotes();
         model.addAttribute("ticket", ticketRepo.findById(id).get());
         model.addAttribute("notes", notes);
+        model.addAttribute("operators", operatorRepo.findAll());
         model.addAttribute("users", userRepo.findAll());
         Note note = new Note();
         note.setTicket(ticketRepo.findById(id).get());
@@ -140,9 +178,6 @@ public class TicketController {
 
         Ticket updatedTicket = ticketRepo.findById(id).get();
         switch (value) {
-            case 0:
-                updatedTicket.setState("To do");
-                break;
 
             case 1:
                 updatedTicket.setState("In progress");

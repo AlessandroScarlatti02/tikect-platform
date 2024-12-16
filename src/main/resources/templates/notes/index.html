@@ -21,49 +21,45 @@
 
                 <p class="h1 my-4">Ticket <span th:text="${ticket.object}"></span>'s notes:</p>
 
-                <a class="btn btn-success" data-bs-toggle="modal" data-bs-target="#noteModal">Add note
-                    <i class="fas fa-edit"></i></a>
+                <div sec:authorize="hasAuthority('OPERATOR')">
 
-            </div>
-            <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel" aria-hidden="true">
-                <form th:action="@{/notes/store}" method="post" th:object="${note}" id="note-form">
+                    <a class="btn btn-success" data-bs-toggle="modal" data-bs-target="#noteModal">Add note
+                        <i class="fas fa-edit"></i></a>
 
-                    <div class="modal-dialog">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <h1 class="modal-title fs-5" id="exampleModalLabel">Create note</h1>
-                                <button type="button" class="btn-close" data-bs-dismiss="modal"
-                                    aria-label="Close"></button>
-                            </div>
-                            <div class="modal-body">
-                                <label class="form-label" for="author">Author</label>
-                                <select name="author" th:errorClass="is-invalid" class="form-select" id="author"
-                                    th:field="*{author}">
-                                    <option value="0"></option>
-                                    <div th:each=" user : ${users}">
-                                        <option th:value="${user.id}">
-                                            <p th:text="${user.username}"></p>
-                                        </option>
+                </div>
+                <div class="modal fade" id="noteModal" tabindex="-1" aria-labelledby="noteModalLabel"
+                    aria-hidden="true">
+                    <form th:action="@{/notes/store}" method="post" th:object="${note}" id="note-form">
+
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h1 class="modal-title fs-5" id="exampleModalLabel">Create note</h1>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                        aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+
+                                    <label for="text" class="form-label">Text</label>
+                                    <textarea class="form-control" placeholder="" id="text" th:field="*{text}"
+                                        style="height: 150px" th:errorClass="is-invalid" name="text"></textarea>
+                                    <input type="hidden" th:field="*{ticket}">
+                                    <div>
+                                        <ul>
+                                            <li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
+                                        </ul>
                                     </div>
 
-                                </select>
-                                <label for="text" class="form-label">Text</label>
-                                <textarea class="form-control" placeholder="" id="text" th:field="*{text}"
-                                    style="height: 150px" th:errorClass="is-invalid" name="text"></textarea>
-                                <input type="hidden" th:field="*{ticket}">
-                                <div>
-                                    <ul>
-                                        <li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
-                                    </ul>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary"
+                                        data-bs-dismiss="modal">Close</button>
+                                    <button type="submit" class="btn btn-primary">Save</button>
                                 </div>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                <button type="submit" class="btn btn-primary">Save</button>
-                            </div>
                         </div>
-                    </div>
-                </form>
+                    </form>
+                </div>
             </div>
             <div class="col-12 d-flex justify-content-center">
 
@@ -78,7 +74,7 @@
                         </thead>
                         <tbody>
                             <tr th:each=" note : ${notes}">
-                                <td th:text="${note.author.getUsername()}"></td>
+                                <td th:text="${note.author.getName()}"></td>
                                 <td th:text="${note.creationDate}"></td>
                                 <td th:text="${note.text}"></td>
                             </tr>

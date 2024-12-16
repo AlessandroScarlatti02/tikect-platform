@@ -4,7 +4,6 @@ import java.time.LocalDate;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -34,7 +33,7 @@ public class Note {
 
     @ManyToOne
     @JoinColumn(name = "author", nullable = false)
-    private User author;
+    private Operator author;
 
     public Long getId() {
         return id;
@@ -68,11 +67,11 @@ public class Note {
         this.ticket = ticket;
     }
 
-    public User getAuthor() {
+    public Operator getAuthor() {
         return author;
     }
 
-    public void setAuthor(User author) {
+    public void setAuthor(Operator author) {
         this.author = author;
     }
 
