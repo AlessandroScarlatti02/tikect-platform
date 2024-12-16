@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <div th:replace="~{fragments :: head}"></div>
+    <div th:replace="~{fragments/fragments :: head}"></div>
     <title>Create new ticket</title>
 </head>
 
 <body>
 
     <!-- Navbar -->
-    <div th:replace="~{navbar :: navbar}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
 
     <div class="container-fluid p-4">
         <div class="row">
@@ -43,7 +43,7 @@
         </form>
     </div>
     </div>
-    <div th:replace="~{fragments :: scripts}"></div>
+    <div th:replace="~{fragments/fragments :: scripts}"></div>
 </body>
 
 </html>

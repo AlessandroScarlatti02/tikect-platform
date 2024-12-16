@@ -33,8 +33,8 @@ public class NoteController {
             RedirectAttributes redirectAttributes, Model model) {
 
         noteForm.setCreationDate(LocalDate.now());
-        if (noteForm.getUser() == null) {
-            bindingResult.addError(new ObjectError("User not found", "Insert Author"));
+        if (noteForm.getAuthor() == null) {
+            bindingResult.addError(new ObjectError("Author not found", "Insert Author"));
         }
         if (bindingResult.hasErrors()) {
             model.addAttribute("ticket", noteForm.getTicket());

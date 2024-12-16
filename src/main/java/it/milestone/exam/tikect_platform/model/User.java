@@ -35,7 +35,7 @@ public class User {
     @ManyToMany(fetch = FetchType.EAGER)
     private List<Role> role;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "author")
     private List<Note> notes;
 
     public Long getId() {

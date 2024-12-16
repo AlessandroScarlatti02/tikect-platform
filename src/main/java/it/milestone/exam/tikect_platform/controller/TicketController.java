@@ -18,6 +18,7 @@ import it.milestone.exam.tikect_platform.model.Role;
 import it.milestone.exam.tikect_platform.model.Ticket;
 import it.milestone.exam.tikect_platform.model.User;
 import it.milestone.exam.tikect_platform.repository.CategoryRepository;
+import it.milestone.exam.tikect_platform.repository.NoteRepository;
 import it.milestone.exam.tikect_platform.repository.RoleRepository;
 import it.milestone.exam.tikect_platform.repository.TicketRepository;
 import it.milestone.exam.tikect_platform.repository.UserRepository;
@@ -45,6 +46,9 @@ public class TicketController {
     @Autowired
     RoleRepository roleRepo;
 
+    @Autowired
+    NoteRepository noteRepo;
+
     @GetMapping
     public String home(Model model, @RequestParam(name = "keyword", required = false) String keyword) {
 
@@ -54,7 +58,7 @@ public class TicketController {
 
             model.addAttribute("tickets", ticketRepo.findAll());
         }
-
+        model.addAttribute("keyword", keyword);
         model.addAttribute("users", userRepo.findAll());
         return "tickets/home";
     }
@@ -119,6 +123,42 @@ public class TicketController {
         model.addAttribute("note", note);
 
         return "notes/index";
+    }
+
+    @PostMapping("/delete/{id}")
+    public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
+
+        redirectAttributes.addFlashAttribute("deleteMessage",
+                "Ticket : " + ticketRepo.findById(id).get().getObject() + " deleted succesfully");
+        noteRepo.deleteAll(ticketRepo.findById(id).get().getNotes());
+        ticketRepo.deleteById(id);
+        return "redirect:/tickets";
+    }
+
+    @GetMapping("/state/{id}/{value}")
+    public String state(@PathVariable Long id, @PathVariable int value, RedirectAttributes redirectAttributes) {
+
+        Ticket updatedTicket = ticketRepo.findById(id).get();
+        switch (value) {
+            case 0:
+                updatedTicket.setState("To do");
+                break;
+
+            case 1:
+                updatedTicket.setState("In progress");
+                break;
+
+            case 2:
+                updatedTicket.setState("Completed");
+                break;
+        }
+
+        ticketRepo.save(updatedTicket);
+        redirectAttributes.addFlashAttribute("stateMessage",
+                "State of ticket: " + ticketRepo.findById(id).get().getObject() + " changed to \""
+                        + ticketRepo.findById(id).get().getState() + "\" succesfully");
+
+        return "redirect:/tickets";
     }
 
 }

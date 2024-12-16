@@ -2,14 +2,14 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <div th:replace="~{fragments :: head}"></div>
+    <div th:replace="~{fragments/fragments :: head}"></div>
     <title>Create new ticket</title>
 </head>
 
 <body>
 
     <!-- Navbar -->
-    <div th:replace="~{navbar :: navbar}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container-fluid">
         <div class="row">
             <div class="col-12 ">
@@ -36,20 +36,16 @@
                                     aria-label="Close"></button>
                             </div>
                             <div class="modal-body">
-                                <label class="form-label" for="user">Author</label>
-                                <select name="user" th:errorClass="is-invalid" class="form-select" id="user"
-                                    th:field="*{user}">
+                                <label class="form-label" for="author">Author</label>
+                                <select name="author" th:errorClass="is-invalid" class="form-select" id="author"
+                                    th:field="*{author}">
                                     <option value="0"></option>
                                     <div th:each=" user : ${users}">
                                         <option th:value="${user.id}">
                                             <p th:text="${user.username}"></p>
                                         </option>
                                     </div>
-                                    <div>
-                                        <ul>
-                                            <li th:each="error : ${#fields.errors('user')}" th:text="${error}"></li>
-                                        </ul>
-                                    </div>
+
                                 </select>
                                 <label for="text" class="form-label">Text</label>
                                 <textarea class="form-control" placeholder="" id="text" th:field="*{text}"
@@ -57,7 +53,7 @@
                                 <input type="hidden" th:field="*{ticket}">
                                 <div>
                                     <ul>
-                                        <li th:each="error : ${#fields.errors('text')}" th:text="${error}"></li>
+                                        <li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
                                     </ul>
                                 </div>
                             </div>
@@ -82,7 +78,7 @@
                         </thead>
                         <tbody>
                             <tr th:each=" note : ${notes}">
-                                <td th:text="${note.user.getUsername()}"></td>
+                                <td th:text="${note.author.getUsername()}"></td>
                                 <td th:text="${note.creationDate}"></td>
                                 <td th:text="${note.text}"></td>
                             </tr>
@@ -99,7 +95,7 @@
             </div>
         </div>
 
-        <div th:replace="~{fragments :: scripts}"></div>
+        <div th:replace="~{fragments/fragments :: scripts}"></div>
 </body>
 
 </html>

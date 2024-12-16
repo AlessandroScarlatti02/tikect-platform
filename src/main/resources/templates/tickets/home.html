@@ -2,29 +2,43 @@
 <html xmlns:th="http://www.thymeleaf.org">
 
 <head>
-    <div th:replace="~{fragments :: head}"></div>
+    <div th:replace="~{fragments/fragments :: head}"></div>
     <title>Tickets</title>
 </head>
 
 <body>
 
     <!-- Navbar -->
-    <div th:replace="~{navbar :: navbar}"></div>
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
     <div class="container-fluid">
         <div class="row">
             <p class="h1 text-center my-4">Welcome ADMIN to Ticket Home</p>
         </div>
         <!-- Success Message -->
         <div th:if="${successMessage != null}">
-            <div class="alert alert-success alert-dismissible fade show" role="alert">
+            <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
                 <span th:text="${successMessage}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
-        <!-- Error message -->
+        <!-- Error Message -->
         <div th:if="${errorMessage != null}">
-            <div class="alert alert-warning alert-dismissible fade show" role="alert">
+            <div class="alert alert-warning alert-dismissible fade show text-center" role="alert">
                 <span th:text="${errorMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        <!-- Delete Message -->
+        <div th:if="${deleteMessage != null}">
+            <div class="alert alert-primary alert-dismissible fade show text-center" role="alert">
+                <span th:text="${deleteMessage}"></span>
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        </div>
+        <!-- State Message -->
+        <div th:if="${stateMessage != null}">
+            <div class="alert alert-primary alert-dismissible fade show text-center" role="alert">
+                <span th:text="${stateMessage}"></span>
                 <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
             </div>
         </div>
@@ -59,57 +73,94 @@
         </div>
         <div th:if="${!tickets.isEmpty()}">
 
-            <div class="row">
+            <div class="row p-5">
 
-                <table class="col-12">
+                <table class="col-12 table text-center">
                     <thead>
                         <tr>
                             <th>Object</th>
                             <th>Category</th>
                             <th>Operator</th>
                             <th>State</th>
-                            <th>Utility</th>
+                            <th></th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr th:each=" ticket : ${tickets}">
-                            <td>
+                        <div th:each=" ticket : ${tickets}">
+
+                            <div th:if="${ticket.state == 'To do'}">
+                                <tr class="table-danger">
+                            </div>
+                            <div th:if="${ticket.state == 'In progress'}">
+                                <tr class="table-primary">
+                            </div>
+                            <div th:if="${ticket.state == 'Completed'}">
+                                <tr class="table-success">
+                            </div>
+                            <td valign="middle">
                                 <p th:text="${ticket.object}"></p>
                             </td>
-                            <td>
+                            <td valign="middle">
                                 <p th:text="${ticket.category.getName()}"></p>
                             </td>
-                            <td>
+                            <td valign="middle">
                                 <p th:text="${ticket.user.getUsername()}"></p>
                             </td>
-                            <td>
-                                <p th:text="${ticket.state}"></p>
+                            <td valign="middle">
+                                <p th:text="${ticket.state}" class="fw-bold"></p>
                             </td>
-                            <td>
-                                <div class="d-flex">
-
-                                    <a class="btn btn-light m-2" th:href="@{|/tickets/show/${ticket.id}|}">Info <br>
+                            <td valign="middle">
+                                <div class="d-flex justify-content-end">
+                                    <div th:if="${ticket.state == 'To do'}">
+                                        <a class="btn btn-primary m-2" th:href="@{|/tickets/state/${ticket.id}/1|}">In
+                                            progress</a>
+                                    </div>
+                                    <div th:if="${ticket.state == 'In progress'}">
+                                        <a class="btn btn-success m-2"
+                                            th:href="@{|/tickets/state/${ticket.id}/2|}">Completed</a>
+                                    </div>
+                                    <a class="btn btn-light m-2" th:href="@{|/tickets/show/${ticket.id}|}">Info
+                                        <br>
                                         <i class="fas fa-info-circle"></i></a>
-                                    <a class="btn btn-light m-2" th:href="@{|/tickets/edit/${ticket.id}|}">Add note <br>
-                                        <i class="fas fa-edit"></i></a>
+                                    <form th:action="@{|/tickets/delete/${ticket.id}|}" method="post" class="m-2">
+                                        <button type="submit" class="btn btn-light"
+                                            onclick="return confirm('Are you sure?')">Delete <br><i
+                                                class="fas fa-trash"></i></button>
+                                    </form>
+
+
+
                                 </div>
-                        </tr>
+
+                                </tr>
+
+                        </div>
+
+
                     </tbody>
                 </table>
             </div>
         </div>
 
     </div>
-    <div th:if="${tickets.isEmpty()}">
-        <div class="container-fluid">
-            <div class="alert alert-danger" role="alert">
+    <div th:if="${tickets.isEmpty() && keyword == null}">
+        <div class="container-fluid my-4">
+            <div class="alert alert-danger " role="alert">
                 <p class="h2 text-center">There's no Tickets in the Database
                 </p>
             </div>
         </div>
     </div>
 
-    <div th:replace="~{fragments :: scripts}"></div>
+    <div th:if="${tickets.isEmpty() && !(keyword == null)}">
+        <div class="container-fluid my-4">
+            <div class="alert alert-warning m-2" role="alert">
+                <p class="h2 text-center">There's no Tickets with this filter in the Database
+                </p>
+            </div>
+        </div>
+    </div>
+    <div th:replace="~{fragments/fragments :: scripts}"></div>
 </body>
 
 </html>
