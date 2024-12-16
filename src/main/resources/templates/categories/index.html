@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="~{fragments/fragments :: head}"></div>
+    <title>Categories</title>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+
+    <main>
+        <div class="container justify-content-center" style="text-align: center;">
+            <h1 class="m-4">Categories List</h1>
+
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+
+
+                <div class="col-md-6" th:if="${!categories.isEmpty()}">
+
+                    <table class="table  table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="Category : ${categories}">
+                                <td>
+                                    <p th:text="${Category.name}"></p>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <div class="col-md-6" th:if="${categories.isEmpty()}">
+
+                    <div class="alert alert-dark" role="alert">
+                        <p class="h2 text-center">There's no categories in the Database
+                        </p>
+                    </div>
+
+                </div>
+
+                <form class="col-md-6" th:action="@{/categories/store}" method="post" th:object="${newCategory}"
+                    id="Category-form">
+
+                    <div>
+
+                        <label for="name" class="form-label">
+                            <p class="fw-bold">Insert New category</p>
+                        </label>
+                        <input type="text" th:field="*{name}" id="name" class="form-control" th:errorClass="is-invalid"
+                            placeholder="Name">
+                        <ul>
+                            <li th:each="error : ${#fields.errors('*')}">
+                                <span th:text="${error}"></span>
+                            </li>
+                        </ul>
+
+                        <button type="submit" class="btn btn-primary d-flex justify-content-end">Save</button>
+
+                    </div>
+
+                </form>
+            </div>
+        </div>
+    </main>
+
+
+
+
+    <div th:replace="~{fragments/fragments :: scripts}"></div>
+</body>
+
+</html>

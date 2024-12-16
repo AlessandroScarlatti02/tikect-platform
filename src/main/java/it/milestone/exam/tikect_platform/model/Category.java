@@ -2,6 +2,7 @@ package it.milestone.exam.tikect_platform.model;
 
 import java.util.List;
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -17,6 +18,7 @@ public class Category {
     private Long id;
 
     @NotBlank(message = "Can't be blank or null")
+    @Column(unique = true)
     private String name;
 
     @OneToMany(mappedBy = "category")
