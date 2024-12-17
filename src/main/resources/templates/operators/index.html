@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <div th:replace="~{fragments/fragments :: head}"></div>
+    <title>Operators</title>
+</head>
+
+<body>
+
+    <!-- Navbar -->
+    <div th:replace="~{fragments/navbar :: navbar}"></div>
+
+
+
+    <main>
+        <div class="container justify-content-center" style="text-align: center;">
+            <h1 class="m-4">Operators List</h1>
+
+        </div>
+
+        <div class="container-fluid">
+            <div class="row">
+
+                <div class="col-12 text-center">
+                    <a th:href="@{/operator/create}" class="btn btn-success">Create new Operator</a>
+                </div>
+                <div class="col-12" th:if="${!operators.isEmpty()}">
+
+                    <table class="table  table-striped align-middle">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Surname</th>
+                                <th>Age</th>
+                                <th>N° Tickets</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="Operator : ${operators}">
+                                <td>
+                                    <p th:text="${Operator.name}"></p>
+                                </td>
+                                <td>
+                                    <p th:text="${Operator.surname}"></p>
+                                </td>
+                                <td>
+                                    <p th:text="${Operator.age}"></p>
+                                </td>
+                                <td>
+                                    <p th:text="${Operator.tickets.size()}"></p>
+                                </td>
+                                <td>
+                                    <p th:style="${Operator.state} ? 'color: green' : 'color: red'"
+                                        th:text="${Operator.state} ? 'ACTIVE' : 'NOT ACTIVE'">
+                                    </p>
+                                </td>
+
+                            </tr>
+                        </tbody>
+                    </table>
+
+                </div>
+
+
+
+                <div class="col-md-6" th:if="${operators.isEmpty()}">
+
+                    <div class="alert alert-dark" role="alert">
+                        <p class="h2 text-center">There's no operators in the Database
+                        </p>
+                    </div>
+
+                </div>
+
+
+            </div>
+        </div>
+    </main>
+
+
+
+
+    <div th:replace="~{fragments/fragments :: scripts}"></div>
+</body>
+
+</html>

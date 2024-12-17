@@ -1,5 +1,6 @@
 package it.milestone.exam.tikect_platform.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Random;
@@ -88,12 +89,22 @@ public class TicketController {
 
     @PostMapping("/store")
     public String store(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, Model model,
-            RedirectAttributes redirectAttributes, Random random) {
+            RedirectAttributes redirectAttributes) {
 
         List<Operator> avaliableOperators = operatorRepo.findByState(true);
+        List<Operator> avaliableOperatorsOrdered = new ArrayList(avaliableOperators);
 
-        int size = avaliableOperators.size();
-        int i = random.nextInt(size);
+        for (int i = 0; i < avaliableOperators.size() - 1; i++) {
+            for (int j = 0; j < avaliableOperators.size() - 1 - i; j++) {
+                if (avaliableOperatorsOrdered.get(j).getTickets().size() > avaliableOperatorsOrdered.get(j + 1)
+                        .getTickets().size()) {
+
+                    Operator temp = avaliableOperatorsOrdered.get(j);
+                    avaliableOperatorsOrdered.set(j, avaliableOperatorsOrdered.get(j + 1));
+                    avaliableOperatorsOrdered.set(j + 1, temp);
+                }
+            }
+        }
 
         model.addAttribute("categories", categoryRepo.findAll());
         if (ticketForm.getCategory() == null) {
@@ -103,7 +114,7 @@ public class TicketController {
             return "tickets/create";
         }
 
-        ticketForm.setOperator(avaliableOperators.get(i));
+        ticketForm.setOperator(avaliableOperatorsOrdered.get(0));
         ticketRepo.save(ticketForm);
         redirectAttributes.addFlashAttribute("successMessage", "Ticket created succesfully");
 
