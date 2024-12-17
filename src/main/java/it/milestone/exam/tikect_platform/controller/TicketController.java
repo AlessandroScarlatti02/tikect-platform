@@ -3,7 +3,6 @@ package it.milestone.exam.tikect_platform.controller;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.Random;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -108,7 +107,7 @@ public class TicketController {
 
         model.addAttribute("categories", categoryRepo.findAll());
         if (ticketForm.getCategory() == null) {
-            bindingResult.addError(new ObjectError("Category not Found", "Insert Category"));
+            bindingResult.addError(new ObjectError("category", "Insert Category"));
         }
         if (bindingResult.hasErrors()) {
             return "tickets/create";

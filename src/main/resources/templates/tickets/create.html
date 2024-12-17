@@ -29,23 +29,34 @@
             <div class="col-md-6">
                 <label for="object" class="form-label">Object</label>
                 <input type="text" class="form-control" id="object" th:field="*{object}"
-                    placeholder="Insert Object here..">
+                    placeholder="Insert Object here.." th:errorClass="is-invalid">
+                <div>
+                    <ul>
+                        <li th:each="error : ${#fields.errors('object')}" th:text="${error}"></li>
+                    </ul>
+                </div>
             </div>
             <div class="col-md-6">
                 <label class="form-label" for="category">Category</label>
-                <select class="form-select" id="category" th:field="*{category}">
+                <select class="form-select" id="category" th:field="*{category}" th:errorClass="is-invalid">
                     <option value="0"></option>
                     <div th:each=" category : ${categories}">
                         <option th:value="${category.id}">
                             <p th:text="${category.name}"></p>
                         </option>
                     </div>
+
                 </select>
             </div>
             <div class="col-12">
                 <label for="text" class="form-label">Ticket text</label>
-                <textarea class="form-control" placeholder="" id="text" th:field="*{text}"
-                    style="height: 150px"></textarea>
+                <textarea class="form-control" placeholder="" id="text" th:field="*{text}" style="height: 150px"
+                    th:errorClass="is-invalid"></textarea>
+                <div>
+                    <ul>
+                        <li th:each="error : ${#fields.errors('object')}" th:text="${error}"></li>
+                    </ul>
+                </div>
             </div>
             <div class="col-md-6">
                 <button type="submit" class="btn btn-primary">Save</button>

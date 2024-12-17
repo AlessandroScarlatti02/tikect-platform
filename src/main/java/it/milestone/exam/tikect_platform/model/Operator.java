@@ -25,7 +25,7 @@ public class Operator {
     @NotBlank(message = "Can't be blank or null")
     private String surname;
 
-    @Positive
+    @Positive(message = "Needs to be greather than 0")
     private int age;
 
     private Boolean state;

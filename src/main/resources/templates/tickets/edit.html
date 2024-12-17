@@ -21,6 +21,11 @@
         </div>
 
         <form th:action="@{/tickets/update}" class="row g-3" method="post" th:object="${ticket}" id="ticket-form">
+            <div class="col-12">
+                <ul>
+                    <li th:each="error : ${#fields.errors('*')}" th:text="${error}"></li>
+                </ul>
+            </div>
             <div class="col-md-6">
                 <label for="object" class="form-label">Object</label>
                 <input type="text" class="form-control" id="object" th:field="*{object}"

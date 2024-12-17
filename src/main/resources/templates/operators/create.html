@@ -20,15 +20,30 @@
         <form th:action="@{/operator/store}" class="row g-3" method="post" th:object="${operator}" id="operator-form">
             <div class="col-md-6">
                 <label for="name" class="form-label">Name</label>
-                <input type="text" class="form-control" id="name" th:field="*{name}">
+                <input type="text" class="form-control" id="name" th:field="*{name}" th:errorClass="is-invalid">
+                <div>
+                    <ul>
+                        <li th:each="error : ${#fields.errors('name')}" th:text="${error}"></li>
+                    </ul>
+                </div>
             </div>
             <div class="col-md-6">
                 <label for="surname" class="form-label">Surname</label>
-                <input type="text" class="form-control" id="surname" th:field="*{surname}">
+                <input type="text" class="form-control" id="surname" th:field="*{surname}" th:errorClass="is-invalid">
+                <div>
+                    <ul>
+                        <li th:each="error : ${#fields.errors('surname')}" th:text="${error}"></li>
+                    </ul>
+                </div>
             </div>
             <div class="col-md-4">
                 <label for="age" class="form-label">Age</label>
-                <input type="number" class="form-control" id="age" th:field="*{age}">
+                <input type="number" class="form-control" id="age" th:field="*{age}" th:errorClass="is-invalid">
+                <div>
+                    <ul>
+                        <li th:each="error : ${#fields.errors('age')}" th:text="${error}"></li>
+                    </ul>
+                </div>
             </div>
             <div class="col-12">
                 <button type="submit" class="btn btn-primary">Save</button>
