@@ -17,13 +17,20 @@
                 <p class="h1 text-center my-4" sec:authorize="hasAuthority('ADMIN')">Welcome ADMIN to Ticket Home</p>
                 <div sec:authorize="hasAuthority('OPERATOR')">
 
-                    <p class="h1 text-center my-4">Welcome <span th:text="${operator.Name}"></span> to your Ticket
+                    <p class="h1 text-center mt-4">Welcome <span th:text="${operator.Name}"></span> to your Ticket
                         Home
+                    </p><br>
+                    <p class="h3 text-center">Your state is now
+                        <span th:style="${operator.state} ? 'color: green' : 'color: red'"
+                            th:text="${operator.state} ? 'ACTIVE' : 'NOT ACTIVE'"></span>
                     </p>
-                    <a th:if="${operator.state}" class="btn btn-danger" th:href="@{/operator/state/0}">
-                        Not Active</a>
-                    <a th:if="${!operator.state}" class="btn btn-success" th:href="@{/operator/state/1}">
-                        Active</a>
+                    <div class="d-flex justify-content-center mt-4">
+                        <p class="h3">Change state to: </p>
+                        <a th:if="${operator.state}" class="btn btn-danger" th:href="@{/operator/state/0}">
+                            Not Active</a>
+                        <a th:if="${!operator.state}" class="btn btn-success" th:href="@{/operator/state/1}">
+                            Active</a>
+                    </div>
                 </div>
                 <div sec:authorize="hasAuthority('USER')">
                     <p class="h1 text-center my-4">Welcome USER to Ticket Support Home</p>

@@ -17,6 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import it.milestone.exam.tikect_platform.model.Operator;
 import it.milestone.exam.tikect_platform.repository.OperatorRepository;
+import it.milestone.exam.tikect_platform.repository.RoleRepository;
 import it.milestone.exam.tikect_platform.repository.UserRepository;
 import it.milestone.exam.tikect_platform.security.DatabaseUserDetails;
 import jakarta.validation.Valid;
@@ -34,6 +35,9 @@ public class OperatorController {
 
     @Autowired
     UserRepository userRepo;
+
+    @Autowired
+    RoleRepository roleRepository;
 
     @GetMapping()
     public String index(Model model) {
@@ -106,11 +110,13 @@ public class OperatorController {
         user.setUsername(operatorForm.getName().toLowerCase().trim());
         user.setPassword("{noop}" + operatorForm.getSurname().toLowerCase().trim());
 
+        user.setRole(roleRepository.findByName("OPERATOR"));
         userRepo.save(user);
 
         operatorForm.setState(false);
         operatorForm.setUser(user);
         operatorRepo.save(operatorForm);
+        redirectAttributes.addFlashAttribute("successMessage", "Operator created succesfully");
 
         return "redirect:/operator";
     }

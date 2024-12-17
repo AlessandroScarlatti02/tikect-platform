@@ -11,7 +11,12 @@
     <!-- Navbar -->
     <div th:replace="~{fragments/navbar :: navbar}"></div>
 
-
+    <div th:if="${successMessage != null}">
+        <div class="alert alert-success alert-dismissible fade show text-center" role="alert">
+            <span th:text="${successMessage}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
 
     <main>
         <div class="container justify-content-center" style="text-align: center;">
