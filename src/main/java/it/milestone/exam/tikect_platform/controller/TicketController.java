@@ -90,11 +90,10 @@ public class TicketController {
     public String store(@Valid @ModelAttribute("ticket") Ticket ticketForm, BindingResult bindingResult, Model model,
             RedirectAttributes redirectAttributes) {
 
-        List<Operator> avaliableOperators = operatorRepo.findByState(true);
-        List<Operator> avaliableOperatorsOrdered = new ArrayList(avaliableOperators);
+        List<Operator> avaliableOperatorsOrdered = operatorRepo.findByState(true);
 
-        for (int i = 0; i < avaliableOperators.size() - 1; i++) {
-            for (int j = 0; j < avaliableOperators.size() - 1 - i; j++) {
+        for (int i = 0; i < avaliableOperatorsOrdered.size() - 1; i++) {
+            for (int j = 0; j < avaliableOperatorsOrdered.size() - 1 - i; j++) {
                 if (avaliableOperatorsOrdered.get(j).getTickets().size() > avaliableOperatorsOrdered.get(j + 1)
                         .getTickets().size()) {
 

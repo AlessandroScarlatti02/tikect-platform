@@ -94,7 +94,8 @@ public class OperatorController {
             RedirectAttributes redirectAttributes) {
 
         User user = new User();
-        user.setMail(operatorForm.getName().toLowerCase().trim() + "." + operatorForm.getSurname().toLowerCase().trim()
+        user.setMail(operatorForm.getName().toLowerCase().trim().replaceAll("\\s", "") + "."
+                + operatorForm.getSurname().toLowerCase().trim().replaceAll("\\s", "")
                 + "@ticketplatform.com");
 
         List<User> optionalList = userRepo.findByMail(user.getMail());
@@ -107,8 +108,8 @@ public class OperatorController {
             return "operators/create";
         }
 
-        user.setUsername(operatorForm.getName().toLowerCase().trim());
-        user.setPassword("{noop}" + operatorForm.getSurname().toLowerCase().trim());
+        user.setUsername(operatorForm.getName().toLowerCase().trim().replaceAll("\\s", ""));
+        user.setPassword("{noop}" + operatorForm.getSurname().toLowerCase().trim().replaceAll("\\s", ""));
 
         user.setRole(roleRepository.findByName("OPERATOR"));
         userRepo.save(user);
